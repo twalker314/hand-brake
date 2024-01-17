@@ -232,6 +232,8 @@ static hb_filter_param_t bwdif_presets[] =
     { 1, "Custom",             "custom",       NULL             },
     { 3, "Default",            "default",      "mode=3"         },
     { 2, "Bob",                "bob",          "mode=7"         },
+    { 3, "TFF",                "tff",          "mode=7:parity=0"},
+    { 4, "BFF",                "bff",          "mode=7:parity=1"},
     { 0,  NULL,                NULL,           NULL             },
 };
 
