@@ -107,6 +107,8 @@ hb_avfilter_graph_init(hb_value_t * settings, hb_filter_init_t * init)
                  settings_str);
         goto fail;
     }
+    
+    hb_log("avfilter_graph_parse2(%s)", settings_str);
 
     // Build filter input
 #if HB_PROJECT_FEATURE_QSV
