@@ -384,6 +384,7 @@ int encx265Init(hb_work_object_t *w, hb_job_t *job)
         job->chroma_location = param->vui.chromaSampleLocTypeBottomField + 1;
     }
 
+    /* note to self: x265: lookahead-threads are off by default, but lookahead-slices are on (most presets) */
     /* silence X265_LOG_WARNING, "Source height < 720p; disabling lookahead-slices\n" */
     if (job->height < 720 && param_parse(pv, param, "lookahead-slices", "0")) goto fail;
 
