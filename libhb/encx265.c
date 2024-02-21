@@ -260,6 +260,21 @@ int encx265Init(hb_work_object_t *w, hb_job_t *job)
         }
     }
 
+    /*
+     * don't write chroma_loc_info_present_flag when it matches the default value for H.265
+     * x265 automatically writes chroma_loc_info_present_flag if "chromaloc" option is used
+     *
+     * libavcodec/hevcdec.c
+     * avctx->chroma_sample_location = AVCHROMA_LOC_UNSPECIFIED;
+     * if (sps->chroma_format_idc == 1) {
+     *     if (sps->vui.chroma_loc_info_present_flag) {
+     *         if (sps->vui.chroma_sample_loc_type_top_field <= 5)
+     *             avctx->chroma_sample_location = sps->vui.chroma_sample_loc_type_top_field + 1;
+     *     } else
+     *         avctx->chroma_sample_location = AVCHROMA_LOC_LEFT;
+     }
+     */
+    if (job->chroma_location != AVCHROMA_LOC_LEFT) {
     if (job->chroma_location != AVCHROMA_LOC_UNSPECIFIED) {
         char chromaLocation[256];
         snprintf(chromaLocation, sizeof(chromaLocation),
@@ -271,6 +286,7 @@ int encx265Init(hb_work_object_t *w, hb_job_t *job)
             goto fail;
         }
     }
+    } // if (job->chroma_location != AVCHROMA_LOC_LEFT) {
 
     /* Bit depth */
     pv->bit_depth = hb_get_bit_depth(job->output_pix_fmt);
