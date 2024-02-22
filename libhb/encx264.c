@@ -434,6 +434,27 @@ int encx264Init( hb_work_object_t * w, hb_job_t * job )
     }
 #endif
 
+    /* XXX: personal preference tweaks */
+    if (param.analyse.i_subpel_refine >= 9)
+    {
+#if 0
+#define XXX_LOG_LEVEL 1
+#define XXX_CPU_COUNT 100
+#else
+#define XXX_LOG_LEVEL 3
+#define XXX_CPU_COUNT hb_get_cpu_count()
+#endif
+        int cpu = XXX_CPU_COUNT * 3 / 2;
+        int mbaffh = HB_ALIGN(job->height, 32);
+        param.i_threads = MAX(1, MIN(cpu, mbaffh / 50));
+        if (param.i_threads > 24) param.i_threads &= ~7;
+        if (param.i_threads > 12) param.i_threads &= ~3;
+        if (param.i_threads >= 3) param.i_threads &= ~1;
+        pv->api->param_parse(&param, "lookahead-threads", "1");
+        hb_deep_log(XXX_LOG_LEVEL, "x264: cpu %d h %d mbaffh %d threads MIN(%d, %d) %d: %d", cpu,
+                    job->height, mbaffh, cpu, mbaffh / 50, MIN(cpu, mbaffh / 50), param.i_threads);
+    }
+
     /* place job->encoder_options in an hb_dict_t for convenience */
     hb_dict_t * x264_opts = NULL;
     if (job->encoder_options != NULL && *job->encoder_options)
