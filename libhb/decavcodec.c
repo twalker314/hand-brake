@@ -1550,10 +1550,7 @@ static int decavcodecvInit( hb_work_object_t * w, hb_job_t * job )
     }
 #endif
 
-    if( pv->job && pv->job->title && !pv->job->title->has_resolution_change )
-    {
-        pv->threads = HB_FFMPEG_THREADS_AUTO;
-    }
+    pv->threads = 1; // XXX: disable threaded video decoding
 
 #if HB_PROJECT_FEATURE_QSV
     if (pv->qsv.decode)

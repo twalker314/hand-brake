@@ -85,7 +85,7 @@ int hb_avcodec_open(AVCodecContext *avctx, const AVCodec *codec,
 {
     int ret;
 
-    if ((thread_count == HB_FFMPEG_THREADS_AUTO || thread_count > 0) &&
+    if ((thread_count == HB_FFMPEG_THREADS_AUTO || thread_count > 1) &&
         (codec->type == AVMEDIA_TYPE_VIDEO))
     {
 #if defined (__aarch64__) && defined(_WIN32)
@@ -100,6 +100,7 @@ int hb_avcodec_open(AVCodecContext *avctx, const AVCodec *codec,
     else
     {
         avctx->thread_count = 1;
+        avctx->thread_type = 0;
     }
 
     if (codec->capabilities & AV_CODEC_CAP_EXPERIMENTAL)
