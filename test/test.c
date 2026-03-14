@@ -877,12 +877,12 @@ static int HandleEvents(hb_handle_t * h, hb_dict_t *preset_dict)
             }
             if (p.preview_cur)
             {
-                fprintf(stderr, "%sScanning title %d of %d, preview %d, %.2f %%",
+                fprintf(stdout, "%sScanning title %d of %d, preview %d, %.2f %%",
                         stderr_sep, p.title_cur, p.title_count, p.preview_cur, 100 * p.progress);
             }
             else
             {
-                fprintf(stderr, "%sScanning title %d of %d, %.2f %%",
+                fprintf(stdout, "%sScanning title %d of %d, %.2f %%",
                         stderr_sep, p.title_cur, p.title_count, 100 * p.progress);
             }
             fflush(stderr);
