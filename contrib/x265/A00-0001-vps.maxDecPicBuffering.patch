@@ -1,0 +1,48 @@
+From 38c46db55a588e32838f0285a9e015417e6ce091 Mon Sep 17 00:00:00 2001
+From: Tim Walker <tdskywalker@gmail.com>
+Date: Mon, 16 Mar 2026 22:10:36 +0100
+Subject: [PATCH] vps.maxDecPicBuffering
+
+---
+ source/encoder/level.cpp | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/source/encoder/level.cpp b/source/encoder/level.cpp
+index c2f840325..85a690406 100644
+--- a/source/encoder/level.cpp
++++ b/source/encoder/level.cpp
+@@ -203,6 +203,31 @@ void determineLevel(const x265_param &param, VPS& vps)
+         else if (lumaSamples <= ((3 * levels[i].maxLumaSamples) >> 2))
+             maxDpbSize = X265_MIN((4 * MaxDpbPicBuf) / 3, 16);
+ 
++        /* Going up a level due to vps.maxDecPicBuffering? Log it */
++        if (vps.maxDecPicBuffering[vps.maxTempSubLayers - 1] > maxDpbSize)
++        {
++            if (i+1 < NumLevels)
++            {
++                uint32_t maxDpbSizeNext;
++                if (lumaSamples <= (levels[i+1].maxLumaSamples >> 2))
++                    maxDpbSizeNext = X265_MIN(4 * MaxDpbPicBuf, 16);
++                else if (lumaSamples <= (levels[i+1].maxLumaSamples >> 1))
++                    maxDpbSizeNext = X265_MIN(2 * MaxDpbPicBuf, 16);
++                else if (lumaSamples <= ((3 * levels[i+1].maxLumaSamples) >> 2))
++                    maxDpbSizeNext = X265_MIN((4 * MaxDpbPicBuf) / 3, 16);
++                else
++                    maxDpbSizeNext = MaxDpbPicBuf;
++                if (vps.maxDecPicBuffering[vps.maxTempSubLayers - 1] <= maxDpbSizeNext)
++                {
++                    x265_log(&param, X265_LOG_INFO, "levels[%"PRIu32"].name: %s\n", i, levels[i].name);
++                    x265_log(&param, X265_LOG_INFO, "MaxDpbPicBuf: %"PRIu32"\n", MaxDpbPicBuf);
++                    x265_log(&param, X265_LOG_INFO, "maxDpbSize: %"PRIu32"\n", maxDpbSize);
++                    x265_log(&param, X265_LOG_INFO, "vps.maxDecPicBuffering[%"PRIu32" - 1]: %"PRIu32"\n",
++                             vps.maxTempSubLayers, vps.maxDecPicBuffering[vps.maxTempSubLayers - 1]);
++                }
++            }
++        }
++
+         /* The value of sps_max_dec_pic_buffering_minus1[ HighestTid ] + 1 shall be less than
+          * or equal to MaxDpbSize */
+         if (vps.maxDecPicBuffering[vps.maxTempSubLayers - 1] > maxDpbSize)
+-- 
+2.50.1 (Apple Git-155)
+
