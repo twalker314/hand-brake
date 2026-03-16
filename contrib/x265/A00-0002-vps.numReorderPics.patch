@@ -1,0 +1,28 @@
+From 25b23e62b6bad5163edbb9f5fdcf02dd12f55991 Mon Sep 17 00:00:00 2001
+From: Tim Walker <tdskywalker@gmail.com>
+Date: Mon, 16 Mar 2026 23:21:45 +0100
+Subject: [PATCH] vps.numReorderPics
+
+---
+ source/encoder/level.cpp | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/source/encoder/level.cpp b/source/encoder/level.cpp
+index 85a690406..eb0583b70 100644
+--- a/source/encoder/level.cpp
++++ b/source/encoder/level.cpp
+@@ -378,6 +378,11 @@ bool enforceLevel(x265_param& param, VPS& vps)
+     {
+         vps.numReorderPics[i] = (i == 0) ? ((param.bBPyramid && param.bframes > 1) ? 2 : !!param.bframes) : i;
+         vps.maxDecPicBuffering[i] = X265_MIN(MAX_NUM_REF, X265_MAX(vps.numReorderPics[i] + 2, (uint32_t)param.maxNumReferences) + 1) + !!param.bEnableSCC;
++        x265_log(&param, X265_LOG_INFO, "X265_MIN(%d, X265_MAX(%"PRIu32" + 2, %"PRIu32") + 1) + %d\n", MAX_NUM_REF, vps.numReorderPics[i], (uint32_t)param.maxNumReferences, !!param.bEnableSCC);
++        x265_log(&param, X265_LOG_INFO, "vps.maxDecPicBuffering[%"PRIu32"]: %"PRIu32"\n", i, vps.maxDecPicBuffering[i]);
++        x265_log(&param, X265_LOG_INFO, "vps.numReorderPics[%"PRIu32"]: %"PRIu32"\n", i, vps.numReorderPics[i]);
++        x265_log(&param, X265_LOG_INFO, "param.bBPyramid: %d\n", param.bBPyramid);
++        x265_log(&param, X265_LOG_INFO, "param.bframes %d\n", param.bframes);
+     }
+ 
+     if (!!param.bEnableTemporalSubLayers)
+-- 
+2.50.1 (Apple Git-155)
+
