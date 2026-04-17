@@ -4501,7 +4501,7 @@ hb_filter_object_t * hb_filter_get( int filter_id )
             break;
 
         case HB_FILTER_BWDIF:
-            filter = &hb_filter_bwdif;
+            filter = &hb_filter_w3fdif;
             break;
 
         case HB_FILTER_COLORSPACE:

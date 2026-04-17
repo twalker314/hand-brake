@@ -42,7 +42,7 @@ const char deint_template[] =
 
 FFMPEG_DEINTERLACE_FILTER(HB_FILTER_YADIF, "Deinterlace", yadif,
                           deint_template);
-FFMPEG_DEINTERLACE_FILTER(HB_FILTER_BWDIF, "Bwdif", bwdif,
+FFMPEG_DEINTERLACE_FILTER(HB_FILTER_BWDIF, "w3fdif", w3fdif,
                           deint_template);
 /* FFMPEG_DEINTERLACE_FILTER(..., "Estdif", estdif,
                           estdif_template); */
@@ -95,6 +95,40 @@ static int deinterlace_init(hb_filter_object_t * filter,
     hb_dict_t * avfilter = hb_dict_init();
     hb_dict_t * avsettings = hb_dict_init();
 
+    if (filter->id == HB_FILTER_BWDIF) // actually w3fdif
+    {
+        hb_dict_set(avsettings, "filter", hb_value_string("complex"));
+        if ((mode & MODE_XXDIF_BOB))
+        {
+            hb_dict_set(avsettings, "mode", hb_value_string("field"));
+        }
+        else
+        {
+            hb_dict_set(avsettings, "mode", hb_value_string("frame"));
+        }
+        switch (parity)
+        {
+            case 0:
+                hb_dict_set(avsettings, "parity", hb_value_string("tff"));
+                break;
+            case 1:
+                hb_dict_set(avsettings, "parity", hb_value_string("bff"));
+                break;
+            default:
+                hb_dict_set(avsettings, "parity", hb_value_string("auto"));
+                break;
+        }
+        if ((mode & MODE_DECOMB_SELECTIVE))
+        {
+            hb_dict_set(avsettings, "deint", hb_value_string("interlaced"));
+        }
+        else
+        {
+            hb_dict_set(avsettings, "deint", hb_value_string("all"));
+        }
+    }
+    else // HB_FILTER_BWDIF (actually w3fdif)
+    {
     if (mode & MODE_XXDIF_BOB)
     {
         if ((mode & MODE_YADIF_SPATIAL) || !is_yadif)
@@ -132,6 +166,7 @@ static int deinterlace_init(hb_filter_object_t * filter,
     {
         hb_dict_set(avsettings, "parity", hb_value_string("bff"));
     }
+    } // HB_FILTER_BWDIF (actually w3fdif)
     hb_dict_set(avfilter, filter_name, avsettings);
     pv->avfilters = avfilter;
 
