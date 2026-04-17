@@ -1216,6 +1216,16 @@ int reinit_video_filters(hb_work_private_t * pv)
         color_range = pv->job->color_range;
     }
 
+    /*
+     * XXX: unknown == limited range is assumed elsewhere but not here
+     * In my testing, calling zscale with color_range == unknown gives
+     * the same output as not calling it at all, except we are calling
+     * the filter unnecessarily. Let's assume unknown == limited so we
+     * can skip filtering altogether if crop/scale also isn't required.
+     */
+    if (pv->frame->color_range == AVCOL_RANGE_UNSPECIFIED)
+        pv->frame->color_range  = AVCOL_RANGE_MPEG;
+
     if (pix_fmt            == pv->frame->format  &&
         orig_width         == pv->frame->width   &&
         orig_height        == pv->frame->height  &&
