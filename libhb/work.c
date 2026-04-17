@@ -468,6 +468,9 @@ void hb_display_job_info(hb_job_t *job)
 #endif
     {
         hb_log("   + decoder: %s %d-bit (%s)", title->video_codec_name, hb_get_bit_depth(job->input_pix_fmt), av_get_pix_fmt_name(job->input_pix_fmt));
+        hb_log("     + color range: %s", av_color_range_name(title->color_range));
+        hb_log("     + color profile: %d-%d-%d", title->color_prim, title->color_transfer, title->color_matrix);
+        hb_log("     + chroma location: %s", av_chroma_location_name(title->chroma_location));
     }
 
     if( title->video_bitrate )
@@ -644,6 +647,8 @@ void hb_display_job_info(hb_job_t *job)
             }
         }
 
+        hb_log("     + color range: %s",
+                        av_color_range_name(job->color_range));
         hb_log("     + color profile: %d-%d-%d",
                job->color_prim, job->color_transfer, job->color_matrix);
         hb_log("     + chroma location: %s",
