@@ -5958,17 +5958,6 @@ static hb_title_t *ffmpeg_title_scan( hb_stream_t *stream, hb_title_t *title )
                 chapter->minutes = ( seconds % 3600 ) / 60;
                 chapter->seconds = ( seconds % 60 );
 
-                tag = av_dict_get( m->metadata, "title", NULL, 0 );
-                /* Ignore generic chapter names set by MakeMKV
-                 * ("Chapter 00" etc.).
-                 * Our default chapter names are better. */
-                if( tag && tag->value && tag->value[0] &&
-                    ( strncmp( "Chapter ", tag->value, 8 ) ||
-                      strlen( tag->value ) > 11 ) )
-                {
-                    hb_chapter_set_title( chapter, tag->value );
-                }
-                else
                 {
                     char chapter_title[80];
                     snprintf( chapter_title, sizeof(chapter_title), "Chapter %d", chapter->index );
