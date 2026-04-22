@@ -1228,7 +1228,7 @@ skip_preview:
             title->color_matrix   = hb_get_color_matrix(vid_info.color_matrix, vid_info.geometry);
         }
 
-        title->color_range = hb_get_color_range(vid_info.color_range);
+        title->color_range = hb_get_color_range(vid_info.color_range);//here
         title->chroma_location = vid_info.chroma_location;
 
         title->video_decode_support = vid_info.video_decode_support;

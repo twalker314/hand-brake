@@ -1688,7 +1688,7 @@ static void filter_video(hb_work_private_t *pv)
         pv->frame->color_primaries = pv->title->color_prim;
         pv->frame->color_trc       = pv->title->color_transfer;
         pv->frame->colorspace      = pv->title->color_matrix;
-        pv->frame->color_range     = pv->title->color_range;
+        pv->frame->color_range     = pv->title->color_range;//here
     }
 
     if (pv->job)

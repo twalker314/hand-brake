@@ -7296,7 +7296,7 @@ int hb_get_color_matrix(int colorspace, hb_geometry_t geometry)
     }
 }
 
-int hb_get_color_range(int color_range)
+int hb_get_color_range(int color_range)//here
 {
     switch (color_range)
     {
