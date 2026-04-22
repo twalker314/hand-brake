@@ -1665,6 +1665,23 @@ static void sanitize_deprecated_pix_fmts(AVFrame *frame)
 
 static void filter_video(hb_work_private_t *pv)
 {
+    if (pv->job)
+    {
+        hb_log("312: jobb: %d vs. - (%d/%d/%d)",
+                pv->frame->color_range,
+                AVCOL_RANGE_UNSPECIFIED,
+                AVCOL_RANGE_MPEG,
+                AVCOL_RANGE_JPEG);
+    }
+    else
+    {
+        hb_log("312: scan: %d vs. - (%d/%d/%d)",
+                pv->frame->color_range,
+                AVCOL_RANGE_UNSPECIFIED,
+                AVCOL_RANGE_MPEG,
+                AVCOL_RANGE_JPEG);
+    }
+
     // Make sure every frame is tagged
     if (pv->job)
     {
@@ -1672,6 +1689,23 @@ static void filter_video(hb_work_private_t *pv)
         pv->frame->color_trc       = pv->title->color_transfer;
         pv->frame->colorspace      = pv->title->color_matrix;
         pv->frame->color_range     = pv->title->color_range;
+    }
+
+    if (pv->job)
+    {
+        hb_log("313: jobb: %d vs. - (%d/%d/%d)",
+                pv->frame->color_range,
+                AVCOL_RANGE_UNSPECIFIED,
+                AVCOL_RANGE_MPEG,
+                AVCOL_RANGE_JPEG);
+    }
+    else
+    {
+        hb_log("313: scan: %d vs. - (%d/%d/%d)",
+                pv->frame->color_range,
+                AVCOL_RANGE_UNSPECIFIED,
+                AVCOL_RANGE_MPEG,
+                AVCOL_RANGE_JPEG);
     }
 
     // J pixel formats are mostly deprecated, however
