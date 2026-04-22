@@ -1392,7 +1392,16 @@ int reinit_video_filters(hb_work_private_t * pv)
 
     if (pv->job)
     {
-        hb_log("314: %d vs. %d (%d/%d/%d)",
+        hb_log("314: jobb: %d vs. %d (%d/%d/%d)",
+                pv->frame->color_range,
+                color_range,
+                AVCOL_RANGE_UNSPECIFIED,
+                AVCOL_RANGE_MPEG,
+                AVCOL_RANGE_JPEG);
+    }
+    else
+    {
+        hb_log("314: scan: %d vs. %d (%d/%d/%d)",
                 pv->frame->color_range,
                 color_range,
                 AVCOL_RANGE_UNSPECIFIED,
