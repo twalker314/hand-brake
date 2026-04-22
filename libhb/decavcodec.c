@@ -1390,6 +1390,16 @@ int reinit_video_filters(hb_work_private_t * pv)
         color_range = pv->job->color_range;
     }
 
+    if (pv->job)
+    {
+        hb_log("314: %d vs. %d (%d/%d/%d)",
+                pv->frame->color_range,
+                color_range,
+                AVCOL_RANGE_UNSPECIFIED,
+                AVCOL_RANGE_MPEG,
+                AVCOL_RANGE_JPEG);
+    }
+
     if (pix_fmt            == pv->frame->format  &&
         orig_width         == pv->frame->width   &&
         orig_height        == pv->frame->height  &&
