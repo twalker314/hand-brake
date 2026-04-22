@@ -31,14 +31,14 @@ typedef struct
     uint64_t       min_title_duration;
     uint64_t       max_title_duration;
     int            keep_duplicate_titles;
-    
+
     int            crop_threshold_frames;
     int            crop_threshold_pixels;
-    
+
     hb_list_t    * exclude_extensions;
 
     int            hw_decode;
-    
+
 } hb_scan_t;
 
 #define PREVIEW_READ_THRESH (200)
@@ -106,13 +106,13 @@ hb_thread_t * hb_scan_init( hb_handle_t * handle, volatile int * die,
     data->store_previews = store_previews;
     data->min_title_duration = min_duration;
     data->max_title_duration = max_duration;
-     
+
     data->crop_threshold_frames = crop_threshold_frames;
     data->crop_threshold_pixels = crop_threshold_pixels;
     data->exclude_extensions    = hb_string_list_copy(exclude_extensions);
     data->hw_decode             = hw_decode;
     data->keep_duplicate_titles = keep_duplicate_titles;
-    
+
     // Initialize scan state
     hb_state_t state;
     hb_get_state2(handle, &state);
@@ -139,13 +139,13 @@ static void ScanFunc( void * _data )
     data->bd = NULL;
     data->dvd = NULL;
     data->stream = NULL;
-        
+
     char *single_path = NULL;
     if (hb_list_count(data->paths) == 1)
     {
         single_path = hb_list_item(data->paths, 0);
     }
-        
+
     /* Try to open the path as a DVD. If it fails, try as a file */
     if( single_path != NULL && !is_known_filetype(single_path) && ( data->bd = hb_bd_init( data->h, single_path, data->keep_duplicate_titles ) ) )
     {
@@ -1271,34 +1271,34 @@ skip_preview:
             // no non-black pixels will be cropped from any frame and a
             // - Tight cropping (i = crops->n - (crops->n >> 2)) where at
             // least 75% of the frames will have their borders removed.
-            // - Smart: A blend between Median and Loose depending on whether 
+            // - Smart: A blend between Median and Loose depending on whether
             // mixed AR content is found.
-            
+
             i = crops->n >> 1; // Median
 
             int crop_switch_frame_count = data->crop_threshold_frames;
             int less_than_median_crop_threshold = data->crop_threshold_pixels;
-            
-            if (crop_switch_frame_count == 0) 
+
+            if (crop_switch_frame_count == 0)
             {
                 // Values seem like sensible defaults.
                 // Have observed that the optimal value does not always linearly increase with preview count.
                  crop_switch_frame_count = 4;
-                
+
                 if (data->preview_count >= 30){
                     crop_switch_frame_count = 6;
                 }
-                
+
                 if (data->preview_count > 40){
                     crop_switch_frame_count = 8;
                 }
             }
-            
-            if (less_than_median_crop_threshold == 0) 
+
+            if (less_than_median_crop_threshold == 0)
             {
                 // It's not uncommon to see 2~12 px variance in cropping.
                 // Defaulting to 9 to account for that variance before switching to loose.
-                // This accounts for variance that is unlikely to be caused by mixed AR. 
+                // This accounts for variance that is unlikely to be caused by mixed AR.
                 less_than_median_crop_threshold = 9;
             }
 
@@ -1306,32 +1306,32 @@ skip_preview:
             int less_than_median_frame_count = 0;
             for (int x = 0; x < crops->n; x++)
             {
-                
+
                 if (crops->t[x] < (crops->t[i] - less_than_median_crop_threshold) ||
                     crops->b[x] < (crops->b[i] - less_than_median_crop_threshold) ||
                     crops->l[x] < (crops->l[i] - less_than_median_crop_threshold) ||
                     crops->r[x] < (crops->r[i] - less_than_median_crop_threshold)){
                     less_than_median_frame_count = less_than_median_frame_count +1;
                 }
-                               
+
                  hb_deep_log(2, "crop: [%d] %d/%d/%d/%d", x, crops->t[x], crops->b[x],  crops->l[x], crops->r[x]);
             }
-            
+
             hb_deep_log(2, "crop: less_than_median_frame_count: %d,", less_than_median_frame_count);
-             
+
             // If we have a reasonable number of samples and it appears we have mixed aspect ratio, switch to loose crop.
-            if (less_than_median_frame_count >= crop_switch_frame_count) 
+            if (less_than_median_frame_count >= crop_switch_frame_count)
             {
                 hb_deep_log(2, "crop: switching to loose crop for this source. May be mixed aspect ratio. (%d)", crop_switch_frame_count);
                 i = 0;
             }
-            
+
             // Automatic "Smart" Crop.
             title->crop[0] = EVEN( crops->t[i] );
             title->crop[1] = EVEN( crops->b[i] );
             title->crop[2] = EVEN( crops->l[i] );
             title->crop[3] = EVEN( crops->r[i] );
-            
+
             // Loose / Conservative  (i = 0)
             i = 0;
             title->loose_crop[0] = EVEN( crops->t[i] );
@@ -1866,7 +1866,7 @@ static int  AllAudioOK( hb_title_t * title )
 static void UpdateState1(hb_scan_t *scan, int title)
 {
     hb_state_t state;
-    
+
     int is_multi_file = hb_list_count(scan->paths) > 0;
 
     hb_get_state2(scan->h, &state);

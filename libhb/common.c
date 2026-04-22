@@ -2868,7 +2868,7 @@ int hb_mixdown_get_discrete_channel_count(int amixdown)
 
         case HB_AMIXDOWN_3POINT0:
             return 3;
-            
+
         case HB_AMIXDOWN_MONO:
         case HB_AMIXDOWN_LEFT:
         case HB_AMIXDOWN_RIGHT:
