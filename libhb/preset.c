@@ -3075,20 +3075,24 @@ static void import_mixdown_72_0_0(hb_value_t *preset)
     int amixdown, ii;
     for (ii = 0; ii < audio_count; ii++)
     {
+        char debug[1024];//debug
         audio_dict = hb_value_array_get(audio_list, ii);
         audio_amix = hb_dict_get(audio_dict, "AudioMixdown");
         if (hb_value_type(audio_amix) == HB_VALUE_TYPE_STRING)
         {
             amixdown = hb_mixdown_get_from_name(hb_value_get_string(audio_amix));
+            sprintf(debug, "%s", hb_value_get_string(audio_amix));//debug
         }
         else
         {
             amixdown = hb_value_get_int(audio_amix);
+            sprintf(debug, "%d", hb_value_get_int(audio_amix));//debug
         }
         if ((amixdown == HB_AMIXDOWN_7POINT1_SDDS) &&
             (mixdown = hb_mixdown_get_from_mixdown(amixdown)))
         {
             hb_dict_set(audio_dict, "AudioMixdown", hb_value_string(mixdown->short_name));
+            hb_log("import_mixdown_72_0_0: mapping %s to %s", debug, mixdown->short_name);//debug
         }
     }
 }
