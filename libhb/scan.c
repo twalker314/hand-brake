@@ -46,6 +46,7 @@ static void UpdateState3(hb_scan_t *scan, int preview);
 static int get_color_prim(int color_primaries, hb_geometry_t geometry, hb_rational_t rate);
 static int get_color_transfer(int color_trc);
 static int get_color_matrix(int colorspace, hb_geometry_t geometry);
+static int get_color_range(int color_range);
 
 static const char *aspect_to_string(hb_rational_t *dar)
 {
@@ -184,6 +185,18 @@ static int get_color_matrix(int colorspace, hb_geometry_t geometry)
     }
 }
 
+static int get_color_range(int color_range)
+{
+    switch (color_range)
+    {
+        case AVCOL_RANGE_MPEG:
+            return AVCOL_RANGE_MPEG;
+        case AVCOL_RANGE_JPEG:
+            return AVCOL_RANGE_JPEG;
+        default:
+            return AVCOL_RANGE_MPEG;
+    }
+}
 
 hb_thread_t * hb_scan_init( hb_handle_t * handle, volatile int * die,
                             const char * path, int title_index,
@@ -1167,12 +1180,20 @@ skip_preview:
         }
         title->pix_fmt = vid_info.pix_fmt;
 
-        if ((title->color_prim     != HB_COLR_PRI_UNDEF &&
-             title->color_prim     != -1) ||
-            (title->color_transfer != HB_COLR_TRA_UNDEF &&
-             title->color_transfer != -1) ||
-            (title->color_matrix   != HB_COLR_MAT_UNDEF &&
-             title->color_matrix != -1))
+        // DVD-Video have no defined color info, but some mostly wrong
+        // values could be read from the mpeg-2 bitstream. Override those here.
+        if (data->dvd)
+        {
+            title->color_prim     = get_color_prim(-1, vid_info.geometry, vid_info.rate);
+            title->color_transfer = HB_COLR_TRA_BT709;
+            title->color_matrix   = HB_COLR_MAT_SMPTE170M;
+        }
+        else if ((title->color_prim     != HB_COLR_PRI_UNDEF &&
+                  title->color_prim     != -1) ||
+                 (title->color_transfer != HB_COLR_TRA_UNDEF &&
+                  title->color_transfer != -1) ||
+                 (title->color_matrix   != HB_COLR_MAT_UNDEF &&
+                  title->color_matrix   != -1))
         {
             title->color_prim     = get_color_prim(title->color_prim, vid_info.geometry, vid_info.rate);
             title->color_transfer = get_color_transfer(title->color_transfer);
@@ -1185,7 +1206,7 @@ skip_preview:
             title->color_matrix   = get_color_matrix(vid_info.color_matrix, vid_info.geometry);
         }
 
-        title->color_range = vid_info.color_range;
+        title->color_range = get_color_range(vid_info.color_range);
         title->chroma_location = vid_info.chroma_location;
 
         title->video_decode_support = vid_info.video_decode_support;
