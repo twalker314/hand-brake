@@ -1360,8 +1360,67 @@ fail:
     return 1;
 }
 
+static int get_color_range(int color_range)
+{
+    switch (color_range)
+    {
+        case AVCOL_RANGE_MPEG:
+            return AVCOL_RANGE_MPEG;
+        case AVCOL_RANGE_JPEG:
+            return AVCOL_RANGE_JPEG;
+        default:
+            return AVCOL_RANGE_MPEG;
+    }
+}
+
+static void sanitize_deprecated_pix_fmts(AVFrame *frame)
+{
+    switch (frame->format)
+    {
+        case AV_PIX_FMT_YUVJ420P:
+            frame->format = AV_PIX_FMT_YUV420P;
+            frame->color_range = AVCOL_RANGE_JPEG;
+            break;
+        case AV_PIX_FMT_YUVJ422P:
+            frame->format = AV_PIX_FMT_YUV422P;
+            frame->color_range = AVCOL_RANGE_JPEG;
+            break;
+        case AV_PIX_FMT_YUVJ444P:
+            frame->format = AV_PIX_FMT_YUV444P;
+            frame->color_range = AVCOL_RANGE_JPEG;
+            break;
+        case AV_PIX_FMT_YUVJ440P:
+            frame->format = AV_PIX_FMT_YUV440P;
+            frame->color_range = AVCOL_RANGE_JPEG;
+            break;
+        case AV_PIX_FMT_YUVJ411P:
+            frame->format = AV_PIX_FMT_YUV411P;
+            frame->color_range = AVCOL_RANGE_JPEG;
+            break;
+        default:
+            break;
+    }
+}
+
 static void filter_video(hb_work_private_t *pv)
 {
+    // Make sure every frame is tagged
+    if (pv->job)
+    {
+        pv->frame->color_primaries = pv->title->color_prim;
+        pv->frame->color_trc       = pv->title->color_transfer;
+        pv->frame->colorspace      = pv->title->color_matrix;
+        pv->frame->color_range     = pv->title->color_range;
+    }
+    else
+    {
+        pv->frame->color_range = get_color_range(pv->frame->color_range);
+    }
+
+    // J pixel formats are mostly deprecated, however
+    // they are still set by decoders, breaking some filters
+    sanitize_deprecated_pix_fmts(pv->frame);
+
     reinit_video_filters(pv);
     if (pv->video_filters.graph != NULL)
     {
