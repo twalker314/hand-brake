@@ -12,8 +12,8 @@ endif
 $(eval $(call import.MODULE.defs,FFMPEG,ffmpeg,$(__deps__)))
 $(eval $(call import.CONTRIB.defs,FFMPEG))
 
-FFMPEG.FETCH.url    = https://ffmpeg.org/releases/ffmpeg-5.1.8.tar.bz2
-FFMPEG.FETCH.sha256 = 5d06992602100a9f3da99c3632e8a1d4b712a754498b331f769c7180fb96868e
+FFMPEG.FETCH.url    = https://ffmpeg.org/releases/ffmpeg-5.1.9.tar.bz2
+FFMPEG.FETCH.sha256 = 0858bcc08605988883b7defe589356656de36cf97b722640b8a6fd7cd548a06f
 
 FFMPEG.CONFIGURE.deps  =
 FFMPEG.CONFIGURE.host  =
