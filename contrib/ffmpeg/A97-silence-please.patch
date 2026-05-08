@@ -1,0 +1,27 @@
+From 9e02f49e67d26cf936d060ba240236b270b102c0 Mon Sep 17 00:00:00 2001
+From: Tim Walker <tdskywalker@gmail.com>
+Date: Sat, 9 May 2026 00:17:07 +0200
+Subject: [PATCH] silence-please
+
+---
+ libswscale/yuv2rgb.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/libswscale/yuv2rgb.c b/libswscale/yuv2rgb.c
+index 5f21ff9c52..31e5c98b63 100644
+--- a/libswscale/yuv2rgb.c
++++ b/libswscale/yuv2rgb.c
+@@ -688,10 +688,6 @@ SwsFunc ff_yuv2rgb_get_func_ptr(SwsContext *c)
+     if (t)
+         return t;
+ 
+-    av_log(c, AV_LOG_WARNING,
+-           "No accelerated colorspace conversion found from %s to %s.\n",
+-           av_get_pix_fmt_name(c->srcFormat), av_get_pix_fmt_name(c->dstFormat));
+-
+     switch (c->dstFormat) {
+     case AV_PIX_FMT_BGR48BE:
+     case AV_PIX_FMT_BGR48LE:
+-- 
+2.50.1 (Apple Git-155)
+
