@@ -95,7 +95,7 @@ static int get_color_prim(int color_primaries, hb_geometry_t geometry, hb_ration
                 (geometry.width >   720 && geometry.height >  576 ))
                 // ITU BT.709 HD content
                 return HB_COLR_PRI_BT709;
-            else if (rate.den == 1080000)
+            else if (rate.den == 1080000 || rate.den == 540000) // XXX: 50 fields/second
                 // ITU BT.601 DVD or SD TV content (PAL)
                 return HB_COLR_PRI_EBUTECH;
             else
@@ -1148,6 +1148,58 @@ skip_preview:
         }
         title->video_bitrate = vid_info.bitrate;
 
+#define XXX_DEBUG_COLORIMETRY 1
+#if     XXX_DEBUG_COLORIMETRY
+        hb_log("scan: debug: title->video_timebase %d/%d", title->video_timebase.num, title->video_timebase.den);
+        hb_log("scan: debug: title->video_codec_param %d", title->video_codec_param);
+        hb_log("scan: debug: AV_CODEC_ID_MPEG2VIDEO %d",   AV_CODEC_ID_MPEG2VIDEO);
+        hb_log("scan: debug: title->container_name %s",    title->container_name);
+        hb_log("scan: debug: title->reg_desc %"PRIu32"",   title->reg_desc);
+        hb_log("scan: debug: title->flags %"PRIu32"",      title->flags);
+        hb_log("scan: debug: vid_info.version %"PRIu32"",  vid_info.version);
+        hb_log("scan: debug: vid_info.flags %"PRIu32"",    vid_info.flags);
+        hb_log("scan: debug: vid_info.mode %"PRIu32"",     vid_info.mode);
+        hb_log("scan: debug: vid_info.profile %d",         vid_info.profile);
+        hb_log("scan: debug: AV_PROFILE_MPEG2_MAIN %d",    4); // cf. libavcodec/profiles.h
+        hb_log("scan: debug: vid_info.level %d",           vid_info.level);
+        hb_log("scan: debug: vid_info.name %s",            vid_info.name);
+#endif
+
+        /*
+         * Test for possible DVD remux before PAR sanitizing.
+         * Files w/mismatching video/container are discarded.
+         */
+        int possible_dvd_remux = 0;
+        if (title->video_codec_param == AV_CODEC_ID_MPEG2VIDEO)
+        {
+            if (vid_info.profile == 4) // AV_PROFILE_MPEG2_MAIN
+            {
+                if (vid_info.level == 8) // Main???
+                {
+                    if (vid_info.geometry.width == 720 || vid_info.geometry.width == 704)
+                    {
+                        if (vid_info.geometry.height == 576 || vid_info.geometry.height == 480)
+                        {
+                            if (title->container_name)
+                            {
+                                if (!strncasecmp(title->container_name, "matroska", strlen("matroska"))) // MakeMKV-only
+                                {
+                                    if (title->geometry.par.num > 1 && title->geometry.par.den > 1) // always non-square
+                                    {
+                                        if (title->geometry.par.num == vid_info.geometry.par.num &&
+                                            title->geometry.par.den == vid_info.geometry.par.den)
+                                        {
+                                            possible_dvd_remux = 1; // could also be DVB remux but whatever
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (data->dvd || data->bd)
         {
             // DVD/BD doesn't have a container PAR, but it has container DAR
@@ -1180,14 +1232,32 @@ skip_preview:
         }
         title->pix_fmt = vid_info.pix_fmt;
 
+#if XXX_DEBUG_COLORIMETRY
+        hb_log("scan: debug: possible_dvd_remux %d", possible_dvd_remux);
+        hb_log("scan: debug: data->dvd %#x", data->dvd);
+        if (0) {} // XXX_DEBUG_COLORIMETRY
+#else
         // DVD-Video have no defined color info, but some mostly wrong
         // values could be read from the mpeg-2 bitstream. Override those here.
-        if (data->dvd)
+        if (data->dvd || possible_dvd_remux)
         {
+            if (title->color_prim     != get_color_prim(-1, vid_info.geometry, vid_info.rate) ||
+                title->color_transfer != HB_COLR_TRA_BT709                                    ||
+                title->color_matrix   != HB_COLR_MAT_SMPTE170M)
+            {
+                hb_log("scan: dvd/remux: color: profile: %d-%d-%d -> %d-%d-%d -> %d-%d-%d",
+                       vid_info.color_prim, vid_info.color_transfer, vid_info.color_matrix,
+                       get_color_prim(vid_info.color_prim,vid_info.geometry,vid_info.rate),
+                       get_color_transfer(vid_info.color_transfer),
+                       get_color_matrix(vid_info.color_matrix, vid_info.geometry),
+                       get_color_prim(-1, vid_info.geometry, vid_info.rate),
+                       HB_COLR_TRA_BT709, HB_COLR_MAT_SMPTE170M);
+            }
             title->color_prim     = get_color_prim(-1, vid_info.geometry, vid_info.rate);
             title->color_transfer = HB_COLR_TRA_BT709;
             title->color_matrix   = HB_COLR_MAT_SMPTE170M;
         }
+#endif
         else if ((title->color_prim     != HB_COLR_PRI_UNDEF &&
                   title->color_prim     != -1) ||
                  (title->color_transfer != HB_COLR_TRA_UNDEF &&
