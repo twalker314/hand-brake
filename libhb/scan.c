@@ -1148,7 +1148,7 @@ skip_preview:
         }
         title->video_bitrate = vid_info.bitrate;
 
-#define XXX_DEBUG_COLORIMETRY 1
+#define XXX_DEBUG_COLORIMETRY 0
 #if     XXX_DEBUG_COLORIMETRY
         hb_log("scan: debug: title->video_timebase %d/%d", title->video_timebase.num, title->video_timebase.den);
         hb_log("scan: debug: title->video_codec_param %d", title->video_codec_param);
