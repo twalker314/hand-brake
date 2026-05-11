@@ -1344,10 +1344,36 @@ static void ShowHelp(void)
     const hb_container_t *container;
     FILE* const out = stdout;
 
-    mixdown = hb_mixdown_get_next(NULL);
+    mixdown = NULL;
     while((mixdown = hb_mixdown_get_next(mixdown)) != NULL)
-        if (hb_ff_mixdown_xlat(mixdown->amixdown, NULL) & AV_CH_BACK_LEFT)
-            fprintf(stderr, "mixdown %s has back channels\n", mixdown->short_name);
+        if (mixdown == hb_mixdown_get_from_mixdown(mixdown->amixdown))
+            if (hb_ff_mixdown_xlat(mixdown->amixdown, NULL) & AV_CH_BACK_LEFT)
+                fprintf(stderr, "mixdown %s has back channels\n", mixdown->short_name);
+
+    encoder = NULL;
+    mixdown = hb_mixdown_get_from_mixdown(HB_AMIXDOWN_QUAD);
+    while ((encoder = hb_audio_encoder_get_next(encoder)) != NULL)
+    {
+        if (encoder != hb_audio_encoder_get_from_codec(encoder->codec))
+            continue; // not enabled
+        if (encoder->codec & HB_ACODEC_PASS_FLAG)
+            continue;
+        if (hb_mixdown_has_codec_support(mixdown->amixdown, encoder->codec))
+            fprintf(stderr, "%s: %s\n", mixdown->short_name, encoder->short_name);
+    }
+
+    encoder = NULL;
+    mixdown = hb_mixdown_get_from_mixdown(HB_AMIXDOWN_7POINT1_SDDS);
+    while ((encoder = hb_audio_encoder_get_next(encoder)) != NULL)
+    {
+        if (encoder != hb_audio_encoder_get_from_codec(encoder->codec))
+            continue; // not enabled
+        if (encoder->codec & HB_ACODEC_PASS_FLAG)
+            continue; // not actual encoder
+        if (hb_mixdown_has_codec_support(mixdown->amixdown, encoder->codec))
+            fprintf(stderr, "%s: %s\n", mixdown->short_name, encoder->short_name);
+    }
+
     return;//debug
 
     fprintf( out,
