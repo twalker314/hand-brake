@@ -30,7 +30,9 @@
 #include <pthread.h>
 #endif
 
+#define hb_buffer_t void
 #include "handbrake/handbrake.h"
+#include "handbrake/hbffmpeg.h"
 #include "handbrake/lang.h"
 #include "parsecsv.h"
 
@@ -1341,6 +1343,12 @@ static void ShowHelp(void)
     const hb_encoder_t *encoder;
     const hb_container_t *container;
     FILE* const out = stdout;
+
+    mixdown = hb_mixdown_get_next(NULL);
+    while((mixdown = hb_mixdown_get_next(mixdown)) != NULL)
+        if (hb_ff_mixdown_xlat(mixdown->amixdown, NULL) & AV_CH_BACK_LEFT)
+            fprintf(stderr, "mixdown %s has back channels\n", mixdown->short_name);
+    return;//debug
 
     fprintf( out,
 "Usage: HandBrakeCLI [options] -i <source> -o <destination>\n"
