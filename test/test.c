@@ -1724,7 +1724,7 @@ static void ShowHelp(void)
 "                           (default: automatically remove black bars)\n"
 "       --crop-threshold-pixels <number>\n"
 "                           Number of pixels difference before we consider the frame\n"
-"                           to be a different aspect ratio\n" 
+"                           to be a different aspect ratio\n"
 "                           (default: 9)\n"
 "       --crop-threshold-frames <number>\n"
 "                           Number of frames that must be different to trigger\n"
@@ -2443,7 +2443,7 @@ static int ParseOptions( int argc, char ** argv )
             { "crop-mode",   required_argument, NULL,     CROP_MODE },
             { "crop-threshold-pixels",  required_argument,  NULL, CROP_THRESHOLD_PIXELS },
             { "crop-threshold-frames",  required_argument,  NULL, CROP_THRESHOLD_FRAMES },
-            
+
             { "pad",         required_argument, NULL,            PAD },
             { "no-pad",      no_argument,       &pad_disable,    1 },
             { "colorspace",    required_argument, NULL,    FILTER_COLORSPACE},
@@ -3319,7 +3319,7 @@ static int ParseOptions( int argc, char ** argv )
                 else
                 {
                     bwdif = strdup(BWDIF_DEFAULT_PRESET);
-                } 
+                }
                 break;
 #if HB_PROJECT_FEATURE_QSV
             case QSV_ASYNC_DEPTH:
@@ -4650,13 +4650,13 @@ static hb_dict_t * PreparePreset(const char *preset_name)
         hb_dict_set(preset, "PictureUseMaximumSize", hb_value_bool(0));
         hb_dict_set(preset, "PictureAllowUpscaling", hb_value_bool(1));
     }
-    
+
     // --crop is treated as custom.
     // otherwise use --crop-mode to set mode.
     if (crop[0] >= 0 || crop[1] >= 0 || crop[2] >= 0 || crop[3] >= 0)
     {
         hb_dict_set(preset, "PictureCropMode", hb_value_int(3));
-        
+
         if (crop[0] >= 0)
         {
             hb_dict_set(preset, "PictureTopCrop", hb_value_int(crop[0]));
@@ -4673,16 +4673,16 @@ static hb_dict_t * PreparePreset(const char *preset_name)
         {
             hb_dict_set(preset, "PictureRightCrop", hb_value_int(crop[3]));
         }
-    } 
-    else if (crop_mode != NULL && !strcmp(crop_mode, "auto")) 
-    {
-        hb_dict_set(preset, "PictureCropMode",  hb_value_int(0)); 
-    } 
-    else if (crop_mode != NULL && !strcmp(crop_mode, "conservative")) 
-    {
-        hb_dict_set(preset, "PictureCropMode",  hb_value_int(1)); 
     }
-    else if (crop_mode != NULL && !strcmp(crop_mode, "none")) 
+    else if (crop_mode != NULL && !strcmp(crop_mode, "auto"))
+    {
+        hb_dict_set(preset, "PictureCropMode",  hb_value_int(0));
+    }
+    else if (crop_mode != NULL && !strcmp(crop_mode, "conservative"))
+    {
+        hb_dict_set(preset, "PictureCropMode",  hb_value_int(1));
+    }
+    else if (crop_mode != NULL && !strcmp(crop_mode, "none"))
     {
         hb_dict_set(preset, "PictureCropMode",  hb_value_int(2));
     }
