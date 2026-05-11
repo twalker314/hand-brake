@@ -111,7 +111,7 @@ static int encavcodecaInit(hb_work_object_t *w, hb_job_t *job)
             // FFmpeg's libfdk-aac wrapper expects back channels for 5.1
             // audio, and will error out unless we translate the layout
             if (in_channel_layout == AV_CH_LAYOUT_5POINT1)
-                out_channel_layout  = AV_CH_LAYOUT_5POINT1_BACK;
+                out_channel_layout = AV_CH_LAYOUT_5POINT1_BACK;
             break;
 
         case HB_ACODEC_FFAAC:
@@ -120,7 +120,9 @@ static int encavcodecaInit(hb_work_object_t *w, hb_job_t *job)
             // not-so-universally supported feature to signal the
             // non-standard layout
             if (in_channel_layout == AV_CH_LAYOUT_5POINT1)
-                out_channel_layout  = AV_CH_LAYOUT_5POINT1_BACK;
+                out_channel_layout = AV_CH_LAYOUT_5POINT1_BACK;
+            if (in_channel_layout == AV_CH_LAYOUT_2_2)
+                out_channel_layout = AV_CH_LAYOUT_QUAD;
             break;
 
         case HB_ACODEC_FFALAC:
@@ -138,9 +140,11 @@ static int encavcodecaInit(hb_work_object_t *w, hb_job_t *job)
                     break;
             }
             if (in_channel_layout == AV_CH_LAYOUT_5POINT1)
-                out_channel_layout  = AV_CH_LAYOUT_5POINT1_BACK;
+                out_channel_layout = AV_CH_LAYOUT_5POINT1_BACK;
             if (in_channel_layout == AV_CH_LAYOUT_6POINT1)
-                out_channel_layout  = AV_CH_LAYOUT_6POINT1_BACK;
+                out_channel_layout = AV_CH_LAYOUT_6POINT1_BACK;
+            if (in_channel_layout == AV_CH_LAYOUT_7POINT1_WIDE)
+                out_channel_layout = AV_CH_LAYOUT_7POINT1_WIDE_BACK;
             break;
 
         case HB_ACODEC_FFFLAC:
@@ -189,7 +193,9 @@ static int encavcodecaInit(hb_work_object_t *w, hb_job_t *job)
             // FFmpeg's libopus wrapper expects back channels for 5.1
             // audio, and will error out unless we translate the layout
             if (in_channel_layout == AV_CH_LAYOUT_5POINT1)
-                out_channel_layout  = AV_CH_LAYOUT_5POINT1_BACK;
+                out_channel_layout = AV_CH_LAYOUT_5POINT1_BACK;
+            if (in_channel_layout == AV_CH_LAYOUT_2_2)
+                out_channel_layout = AV_CH_LAYOUT_QUAD;
 
             AVChannelLayout ch_layout = {0};
             av_channel_layout_from_mask(&ch_layout, out_channel_layout);
@@ -303,7 +309,8 @@ static int encavcodecaInit(hb_work_object_t *w, hb_job_t *job)
 
     int needs_resample = context->sample_fmt != AV_SAMPLE_FMT_FLT;
     int needs_remap    = av_channel_layout_compare(&in_ch_layout, &out_ch_layout) &&
-                          out_channel_layout != AV_CH_LAYOUT_5POINT1_BACK;
+                         out_channel_layout != AV_CH_LAYOUT_5POINT1_BACK &&
+                         out_channel_layout != AV_CH_LAYOUT_QUAD;
 
     // sample_fmt or remap conversion
     if (needs_resample || needs_remap)
@@ -327,7 +334,8 @@ static int encavcodecaInit(hb_work_object_t *w, hb_job_t *job)
                        context->sample_rate, 0);
         av_opt_set_int(pv->swresample, "out_sample_rate",
                        context->sample_rate, 0);
-        if (hb_audio_dither_is_supported(audio->config.out.codec,
+        if (needs_resample && // not required for remap-only
+            hb_audio_dither_is_supported(audio->config.out.codec,
                                          audio->config.in.sample_bit_depth))
         {
             // dithering needs the sample rate
