@@ -2542,7 +2542,7 @@ int hb_audio_dither_is_supported(uint32_t codec, int depth)
     {
         case HB_ACODEC_FFALAC:
         case HB_ACODEC_FFFLAC:
-            if (depth == 0 || depth > 16)
+            if (depth == 0 || depth > 16)//fixme: WTF??? shouldn't it be <= 16???
                 return 1;
             break;
         case HB_ACODEC_FDK_AAC:
