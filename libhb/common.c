@@ -2532,24 +2532,24 @@ int hb_audio_dither_get_default_method()
     return SWR_DITHER_TRIANGULAR;
 }
 
-int hb_audio_dither_is_supported(uint32_t codec, int depth)
+int hb_audio_dither_is_supported(uint32_t codec, int input_depth)
 {
     /*
      * dithering by swresample, all encoders potentially supported.
-     * enable/allow for encoders using 16bit integer input samples.
+     * enable/allow for encoders using 16bit integer input samples,
+     * but only in cases where input uses > 16bit or unknown depth.
      */
-    hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, depth);//debug
+    hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, input_depth);//debug
     switch (codec)
     {
-        case HB_ACODEC_FFALAC:
-        case HB_ACODEC_FFFLAC:
-            if (depth == 0 || depth > 16)//fixme: WTF??? shouldn't it be <= 16???
-                return 1;
-            break;
         case HB_ACODEC_FDK_AAC:
         case HB_ACODEC_FDK_HAAC:
+        case HB_ACODEC_FFALAC:
+        case HB_ACODEC_FFFLAC:
         case HB_ACODEC_FFPCM16:
-            return 1;
+            if (input_depth == 0 || input_depth > 16)
+                return 1;
+            break;
         default:
             break;
     }
