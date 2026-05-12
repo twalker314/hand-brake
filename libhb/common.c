@@ -2909,6 +2909,8 @@ int hb_mixdown_get_low_freq_channel_count(int amixdown)
 
 int hb_mixdown_get_best(uint32_t codec, hb_channel_layout_t *ch_layout, int mixdown)
 {
+    hb_log("debug: hb_mixdown_get_best: %#"PRIx32", %#"PRIx64" and %d", codec, ch_layout->u.mask, mixdown);
+
     // Passthru, only "None" mixdown is supported
     if (codec & HB_ACODEC_PASS_FLAG)
         return HB_AMIXDOWN_NONE;
@@ -2950,6 +2952,7 @@ int hb_mixdown_get_best_s(uint32_t codec, const char *layout, int mixdown)
 
 int hb_mixdown_get_default(uint32_t codec, hb_channel_layout_t *ch_layout)
 {
+    hb_log("debug: hb_mixdown_get_default: %#"PRIx32" and %#"PRIx64"", codec, ch_layout->u.mask);
     int mixdown;
     switch (codec)
     {
