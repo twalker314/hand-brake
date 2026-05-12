@@ -2538,6 +2538,7 @@ int hb_audio_dither_is_supported(uint32_t codec, int depth)
      * dithering by swresample, all encoders potentially supported.
      * enable/allow for encoders using 16bit integer input samples.
      */
+    hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, depth);//debug
     switch (codec)
     {
         case HB_ACODEC_FFALAC:

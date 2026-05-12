@@ -815,6 +815,10 @@ void hb_display_job_info(hb_job_t *job)
                     hb_log("   + dither: %s",
                            hb_audio_dither_get_description(audio->config.out.dither_method));
                 }
+                else
+                {
+                    hb_log("debug: work: %#"PRIx32", %d", audio->config.out.codec, audio->config.in.sample_bit_depth);//debug
+                }
                 hb_log("   + encoder: %s",
                        hb_audio_encoder_get_long_name(audio->config.out.codec));
                 if (audio->config.out.bitrate > 0)
