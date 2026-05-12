@@ -2535,9 +2535,9 @@ int hb_audio_dither_get_default_method()
 int hb_audio_dither_is_supported(uint32_t codec, int input_depth)
 {
     /*
-     * dithering by swresample, all encoders potentially supported.
-     * enable/allow for encoders using 16bit integer input samples,
-     * but only in cases where input uses > 16bit or unknown depth.
+     * Dithering by swresample, all encoders potentially supported.
+     * Enable/allow for encoders using 16bit integer input samples,
+     * but only in cases where input is > 16bit / of unknown depth.
      */
     hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, input_depth);//debug
     switch (codec)
@@ -2549,7 +2549,6 @@ int hb_audio_dither_is_supported(uint32_t codec, int input_depth)
         case HB_ACODEC_FFPCM16:
             if (input_depth == 0 || input_depth > 16)
                 return 1;
-            break;
         default:
             break;
     }
