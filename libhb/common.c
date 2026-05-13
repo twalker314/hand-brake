@@ -2538,6 +2538,11 @@ int hb_audio_dither_is_supported(uint32_t codec, int input_depth)
      * Dithering by swresample, all encoders potentially supported.
      * Enable/allow for encoders using 16bit integer input samples,
      * but only in cases where input is > 16bit / of unknown depth.
+     *
+     * Lossy encoders are not exempt, as the rouding/truncation errors
+     * that dithering is meant to rectify happen while downsampling to
+     * 16-bit, thus the final internal bit depth of the codec does not
+     * remove the need to dither (for encoders only taking 16bit input).
      */
     hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, input_depth);//debug
     switch (codec)
