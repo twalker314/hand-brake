@@ -2532,19 +2532,19 @@ int hb_audio_dither_get_default_method()
     return SWR_DITHER_TRIANGULAR;
 }
 
-int hb_audio_dither_is_supported(uint32_t codec, int input_depth)
+int hb_audio_dither_is_supported(uint32_t codec, int source_depth)
 {
     /*
      * Dithering by swresample, all encoders potentially supported.
-     * Enable/allow for encoders using 16bit integer input samples,
-     * but only in cases where input is > 16bit / of unknown depth.
+     * Enable/allow for encoder(s) taking 16-bit integers as input,
+     * but only in cases where the source is > 16-bit (or unknown).
      *
      * Lossy encoders are not exempt, as the rouding/truncation errors
      * that dithering is meant to rectify happen while downsampling to
      * 16-bit, thus the final internal bit depth of the codec does not
      * remove the need to dither (for encoders only taking 16bit input).
      */
-    hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, input_depth);//debug
+    hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, source_depth);//debug
     switch (codec)
     {
         case HB_ACODEC_FDK_AAC:
@@ -2552,7 +2552,7 @@ int hb_audio_dither_is_supported(uint32_t codec, int input_depth)
         case HB_ACODEC_FFALAC:
         case HB_ACODEC_FFFLAC:
         case HB_ACODEC_FFPCM16:
-            if (input_depth == 0 || input_depth > 16)
+            if (source_depth == 0 || source_depth > 16)
                 return 1;
         default:
             break;
