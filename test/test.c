@@ -2697,6 +2697,8 @@ static int ParseOptions( int argc, char ** argv )
                 if( optarg != NULL )
                 {
                     mixdowns = hb_str_vsplit(optarg, ',');
+                    for (int ii = 0; mixdowns[ii]; ii++)
+                        fprintf(stdout, "mixdowns[ii: %d]: \"%s\"\n", ii, mixdowns[ii]);//debug
                 }
                 break;
             case 'D':
@@ -3806,6 +3808,7 @@ static int foreign_audio_scan(char **subtracks)
         int ii;
         for (ii = 0; ii < count; ii++)
         {
+            //debug
             if (!strcasecmp(subtracks[ii], "scan"))
             {
                 return 1;
@@ -4050,11 +4053,13 @@ static hb_dict_t * PreparePreset(const char *preset_name)
     if (hb_str_vlen(subtracks) > 0)
     {
         hb_dict_set(preset, "SubtitleAddForeignAudioSearch", hb_value_bool(0));
+        fprintf(stdout, "hb_dict_set preset SubtitleAddForeignAudioSearch hb_value_bool 0\n");//debug
     }
     if (foreign_audio_scan(subtracks))
     {
         // Add foreign audio search
         hb_dict_set(preset, "SubtitleAddForeignAudioSearch", hb_value_bool(1));
+        fprintf(stdout, "hb_dict_set preset SubtitleAddForeignAudioSearch hb_value_bool 1\n");//debug
     }
     if (subburn_native >= 0 || subburn >= 0)
     {
@@ -4277,6 +4282,7 @@ static hb_dict_t * PreparePreset(const char *preset_name)
             last = hb_str_vlen(mixdowns) - 1;
             if (last >= 0 && mixdowns[last][0] != 0)
             {
+                fprintf(stdout, "mixdowns[last: %d]: \"%s\"\n", last, mixdowns[last]);//debug
                 hb_dict_set(audio_dict_stub, "AudioMixdown",
                             hb_value_string(mixdowns[last]));
             }
@@ -4393,6 +4399,7 @@ static hb_dict_t * PreparePreset(const char *preset_name)
             {
                 if (mixdowns[ii][0] != 0)
                 {
+                    fprintf(stdout, "mixdowns[ii: %d]: \"%s\" for track ii: %d\n", ii, mixdowns[ii], ii);//debug
                     audio_dict = hb_value_array_get(list, ii);
                     hb_dict_set(audio_dict, "AudioMixdown",
                                 hb_value_string(mixdowns[ii]));
