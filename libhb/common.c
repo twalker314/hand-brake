@@ -2538,10 +2538,11 @@ int hb_audio_dither_is_supported(uint32_t codec, int source_depth)
      * Enable/allow for encoder(s) taking 16-bit integers as input,
      * but only in cases where the source is > 16-bit (or unknown).
      *
-     * Lossy encoders are not exempt, as the rouding/truncation errors
-     * that dithering is meant to rectify happen while downsampling to
-     * 16-bit, thus the final internal bit depth of the codec does not
-     * remove the need to dither (for encoders only taking 16bit input).
+     * Lossy encoders are not exempt, as the rounding/truncation errors
+     * which dithering is meant to rectify happen while downsampling to
+     * 16bit; whether the encoder uses a higher/variable internal depth
+     * does not eliminate the need to dither following the >16 to 16bit
+     * conversion performed to create the input samples to said encoder.
      */
     hb_log("debug: hb_audio_dither_is_supported: %#"PRIx32", %d", codec, source_depth);//debug
     switch (codec)
@@ -2553,6 +2554,7 @@ int hb_audio_dither_is_supported(uint32_t codec, int source_depth)
         case HB_ACODEC_FFPCM16:
             if (source_depth == 0 || source_depth > 16)
                 return 1;
+        // fall through
         default:
             break;
     }
