@@ -2535,7 +2535,6 @@ int hb_audio_dither_get_default_method()
 int hb_audio_dither_is_supported(uint32_t codec, int source_depth)
 {
     /*
-     * Dithering by swresample, all encoders potentially supported.
      * Enable/allow for encoder(s) taking 16-bit integers as input,
      * but only in cases where the source is > 16-bit (or unknown).
      *
