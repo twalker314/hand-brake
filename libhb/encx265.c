@@ -441,10 +441,10 @@ int encx265Init(hb_work_object_t *w, hb_job_t *job)
     /* statsfile (but not 2-pass) */
     if (param->logLevel >= X265_LOG_DEBUG)
     {
-        if (param->csvfn == NULL)
+        if (param->csvfn[0] == '\0')
         {
             pv->csvfn = hb_get_temporary_filename("x265.csv");
-            param->csvfn = strdup(pv->csvfn);
+            snprintf(param->csvfn, X265_MAX_STRING_SIZE, "%s", pv->csvfn);
         }
         else
         {
