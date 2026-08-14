@@ -1,9 +1,11 @@
 $(eval $(call import.MODULE.defs,LIBVPX,libvpx))
 $(eval $(call import.CONTRIB.defs,LIBVPX))
 
-LIBVPX.FETCH.url     = https://github.com/HandBrake/HandBrake-contribs/releases/download/contribs/libvpx-1.12.0.tar.gz
-LIBVPX.FETCH.url    += https://github.com/webmproject/libvpx/archive/refs/tags/v1.12.0.tar.gz
-LIBVPX.FETCH.sha256  = f1acc15d0fd0cb431f4bf6eac32d5e932e40ea1186fe78e074254d6d003957bb
+LIBVPX.FETCH.url     = https://github.com/HandBrake/HandBrake-contribs/releases/download/contribs2/libvpx-1.16.0.tar.gz
+LIBVPX.FETCH.url    += https://github.com/webmproject/libvpx/archive/refs/tags/v1.16.0.tar.gz
+LIBVPX.FETCH.sha256  = 7a479a3c66b9f5d5542a4c6a1b7d3768a983b1e5c14c60a9396edc9b649e015c
+
+LIBVPX.GCC.args.c_std =
 
 LIBVPX.CONFIGURE.args.host =
 LIBVPX.CONFIGURE.deps  =
@@ -15,6 +17,7 @@ LIBVPX.CONFIGURE.extra =     \
     --disable-vp9-decoder       \
     --enable-vp9-highbitdepth   \
     --disable-examples          \
+    --disable-tools             \
     --disable-docs              \
     --disable-unit-tests
 
@@ -46,8 +49,4 @@ ifeq (darwin,$(HOST.system))
     else ifeq (x86_64,$(HOST.machine))
         LIBVPX.CONFIGURE.extra += --target=x86_64-darwin14-gcc
     endif
-endif
-
-ifeq (1-mingw,$(HOST.cross)-$(HOST.system))
-    LIBVPX.CONFIGURE.extra += --disable-avx512
 endif
