@@ -1,0 +1,22 @@
+From 17097437712cbd3bac88f2556e2373176cefe7e1 Mon Sep 17 00:00:00 2001
+From: Tim Walker <tdskywalker@gmail.com>
+Date: Fri, 14 Aug 2026 21:40:35 +0200
+Subject: [PATCH] releasetagdistance: T
+
+---
+ x265Version.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/x265Version.txt b/x265Version.txt
+index d4e0fd0..53c829e 100644
+--- a/x265Version.txt
++++ b/x265Version.txt
+@@ -1,4 +1,4 @@
+ #Attribute: 	     Values
+ repositorychangeset: e9b8812
+-releasetagdistance: 1
++releasetagdistance: T
+ releasetag: 4.3
+-- 
+2.50.1 (Apple Git-155)
+
